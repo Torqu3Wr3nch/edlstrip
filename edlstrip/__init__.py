@@ -131,9 +131,9 @@ def split_video(video_file, edl_list, split_dir, vcodec='libx264', acodec='copy'
         start,stop = item
         split_file = os.path.join(split_dir, f"split{split_cnt}.ts")
         logging.info(f"Splitting using Start: {start}, Stop: {stop} to split{split_cnt}.ts")
-        cmd = f"ffmpeg -hide_banner -loglevel {str(verbosity)} -y -i '{video_file}' -acodec {acodec} -vcodec {vcodec} -ss {start} -to {stop} -reset_timestamps 1 '{split_file}'"
+        cmd = f"ffmpeg -nostdin -hide_banner -loglevel {str(verbosity)} -y -i '{video_file}' -acodec {acodec} -vcodec {vcodec} -ss {start} -to {stop} -reset_timestamps 1 '{split_file}'"
         logging.debug(f"Running command: {cmd}")
-        subprocess.check_call(['ffmpeg','-hide_banner','-loglevel',str(verbosity),'-y','-i',video_file,'-acodec',acodec,'-vcodec',vcodec,'-ss',start,'-to',stop,'-reset_timestamps','1',split_file])
+        subprocess.check_call(['ffmpeg','-nostdin','-hide_banner','-loglevel',str(verbosity),'-y','-i',video_file,'-acodec',acodec,'-vcodec',vcodec,'-ss',start,'-to',stop,'-reset_timestamps','1',split_file])
         split_list.append(split_file)
         split_cnt+=1
     return split_list
@@ -162,7 +162,7 @@ def join_video(split_list, out_file, verbosity=0):
     # "ffmpeg -f concat -safe 0 -i '{fp.name}' -c copy '{out_file}'"
     logging.debug(f"Created temp file: {fp.name}")
     logging.info(f"Joining {len(split_list)} files to {out_file}")
-    subprocess.check_call(['ffmpeg', '-hide_banner', '-loglevel', str(verbosity), '-f', 'concat', '-safe', '0', '-i', fp.name, '-c', 'copy', out_file])
+    subprocess.check_call(['ffmpeg', '-nostdin', '-hide_banner', '-loglevel', str(verbosity), '-f', 'concat', '-safe', '0', '-i', fp.name, '-c', 'copy', out_file])
     
     # Delete temp file as we're done with it
     os.remove(fp.name)
